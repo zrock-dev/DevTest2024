@@ -1,0 +1,85 @@
+@startuml
+title Online polling system
+footer class diagram
+
+package repository {
+    interface PollRepository {
+        GetAll()
+        Add(Poll poll)
+        CastVote(poll Poll, vote Vote)
+    }
+}
+
+package domain {
+    package response {
+        ' poll list endpoint
+        class PollResponse {
+            - id UUID
+            - name string
+            - options OptionResponse[]
+        }
+
+        class OptionResponse {
+            - id: UUID
+            - name: string
+            - amountVotes: int
+        }
+    }
+
+    package request {
+        class PollRequest {
+            - name: string
+            - options: Option[]
+        }
+
+        class PollVoteRequest {
+            - optionId int
+            - voterEmail string
+        }
+    }
+
+    class Vote {
+        - pollId: UUID
+        - optionID: UUID
+        - email string
+    }
+
+    class Option {
+        - id UUID
+        - name string
+        - vote: Vote
+    }
+
+    class Poll {
+        - id UUID
+        - name string
+        - Option[]
+    }
+}
+
+package service {
+    interface PollService {
+        - repository PollRepository
+        + GetAllPoll(): PollResponse[]
+        + CastVote(pollId UUID, vote PollVoteRequest)
+        + CreatePoll(pollRequest PollRequest): PollResponse
+    }
+    PollService o-- PollRepository
+    PollService --> PollResponse: <<creates>>
+}
+
+
+package controller {
+    class PollManager {
+        - service: PollService
+        +CreatePoll()
+        +CastPoll()
+        +GetAllPoll()
+    }
+    PollManager o-- PollService
+    PollManager --> PollRequest: <<creates>>
+    PollManager --> PollVoteRequest: <<creates>>
+}
+
+
+@enduml

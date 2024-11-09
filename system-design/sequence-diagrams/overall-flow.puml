@@ -1,0 +1,33 @@
+@startuml
+skinparam wrapwidth 200
+title Online polling system
+footer sequence diagram
+
+participant "UserInterface" as ui
+participant "API:PollManager" as poll_manager
+participant "API:PollService" as poll_service
+participant "API:PollRepository" as poll_repository
+participant "Database" as db
+
+group "GET /api/v1/polls"
+ui -> poll_manager: request()
+poll_manager -> poll_service: handle()
+poll_service -> poll_repository: crud()
+poll_repository -> db: request data
+end
+
+group "POST /api/v1/polls"
+ui -> poll_manager: request()
+poll_manager -> poll_service: handle()
+poll_service -> poll_repository: crud()
+poll_repository -> db: request data
+end
+
+group "POST /api/v1/polls:id/votes"
+ui -> poll_manager: request()
+poll_manager -> poll_service: handle()
+poll_service -> poll_repository: crud()
+poll_repository -> db: request data
+end
+
+@enduml
