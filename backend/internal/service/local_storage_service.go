@@ -9,7 +9,6 @@ import (
 
 type LocalStorageService struct {
 	repository repository.PollRepository
-	validator  PollValidator
 }
 
 func (l LocalStorageService) CastVote(pollId uuid.UUID, vote domain.PollVoteRequest) error {
@@ -30,7 +29,7 @@ func (l LocalStorageService) CastVote(pollId uuid.UUID, vote domain.PollVoteRequ
 	return nil
 }
 
-func (l LocalStorageService) CreatePoll(pollRequest domain.PollRequest) error {
+func (l LocalStorageService) CreatePoll(pollRequest domain.PollRequest) (domain.Poll, error) {
 	var options []domain.Option
 	for index := range pollRequest.Options {
 		optionRequest := pollRequest.Options[index]
@@ -41,13 +40,14 @@ func (l LocalStorageService) CreatePoll(pollRequest domain.PollRequest) error {
 		})
 	}
 
-	l.repository.AddPoll(domain.Poll{
+	poll := domain.Poll {
 		Id:     uuid.New(),
 		Name:   pollRequest.Name,
 		Option: []domain.Option{},
-	})
+	}
 
-	return nil
+	return poll, l.repository.AddPoll(poll)
+
 }
 
 func handleOptions(pollOptions []domain.Option) []domain.OptionResponse {
@@ -87,9 +87,8 @@ func (l LocalStorageService) GetAllPoll() ([]domain.PollResponse, error) {
 	return pollsResponse, nil
 }
 
-func NewLocalStorageService(repository repository.PollRepository, validator PollValidator) PollService {
+func NewLocalStorageService(repository repository.PollRepository) PollService {
 	return LocalStorageService{
 		repository: repository,
-		validator:  validator,
 	}
 }

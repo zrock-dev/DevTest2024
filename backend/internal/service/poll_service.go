@@ -9,5 +9,5 @@ import (
 type PollService interface {
 	GetAllPoll() ([]domain.PollResponse, error)
 	CastVote(pollId uuid.UUID, vote domain.PollVoteRequest) error
-	CreatePoll(domain.PollRequest) error
+	CreatePoll(domain.PollRequest) (domain.Poll, error)
 }

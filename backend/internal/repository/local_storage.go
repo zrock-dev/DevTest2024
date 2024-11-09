@@ -7,35 +7,38 @@ import (
 )
 
 type LocalStorage struct {
-	polls       []domain.Poll
-	pollOptions map[uuid.UUID][]domain.Option
-	optionVotes map[uuid.UUID][]domain.Vote
+	pollsList   []domain.Poll
+	polls       map[uuid.UUID]domain.Poll
+	pollOptions map[uuid.UUID]domain.Option
 }
 
-func (l LocalStorage) GetAllOptions(pollId uuid.UUID) []domain.Option {
-    return l.pollOptions[pollId]
+func (l LocalStorage) CastVote(pollId uuid.UUID, vote domain.Vote) error {
+	panic("unimplemented")
 }
 
-func (l LocalStorage) AddOption(pollId uuid.UUID, option domain.Option) {
-	l.pollOptions[pollId] =  append(l.pollOptions[pollId], option)
+func (l LocalStorage) GetOption(pollId uuid.UUID, optionId uuid.UUID) (domain.Option, error) {
+	return l.pollOptions[optionId], nil
 }
 
-func (l LocalStorage) AddPoll(poll domain.Poll) {
-	l.polls = append(l.polls, poll)
+func (l LocalStorage) AddPoll(poll domain.Poll) error {
+	l.polls[poll.Id] = poll
+
+	for index := range poll.Option {
+		option := poll.Option[index]
+		l.pollOptions[option.Id] = option
+	}
+
+	return nil
 }
 
-func (l LocalStorage) CastVote(pollId uuid.UUID, vote domain.Vote) {
-	l.optionVotes[vote.OptionId] =  append(l.optionVotes[pollId], vote)
-}
-
-func (l LocalStorage) GetAll() []domain.Poll {
-    return l.polls
+func (l LocalStorage) GetAll() ([]domain.Poll, error) {
+	return l.pollsList, nil
 }
 
 func NewLocalStorage() PollRepository {
 	return LocalStorage{
-		polls:       []domain.Poll{},
-		pollOptions: map[uuid.UUID][]domain.Option{},
-		optionVotes: map[uuid.UUID][]domain.Vote{},
+		pollsList:   []domain.Poll{},
+		polls:       map[uuid.UUID]domain.Poll{},
+		pollOptions: map[uuid.UUID]domain.Option{},
 	}
 }
