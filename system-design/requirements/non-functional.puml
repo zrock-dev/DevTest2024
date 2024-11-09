@@ -1,0 +1,35 @@
+@startuml
+
+package "non-functional" {
+    stereotype "validation rules" AS validator <<Requirement>> {
+        overview= each endpoint should validate input data
+    }
+
+
+    package "storage" {
+        stereotype "storage selection" AS switch <<Requirement>> {
+            overview= the system should change from one storage or other.
+        }
+
+        stereotype "in-memory storage" AS storage_memory <<Requirement>> {
+            overview= use in-memory storage to manage poll data.
+        }
+
+        stereotype "database" AS db <<Requirement>> {
+            overview= system should persist data in a database
+        }
+
+        stereotype "storage" AS storage <<Requirement>> {
+            overview= system should be able to store data
+        }
+        storage +-- storage_memory
+        storage +-- db
+        storage <.. switch: <<drvReq>>
+    }
+}
+
+@enduml
+
+    stereotype "" AS <<Requirement>> {
+        overview=
+    }

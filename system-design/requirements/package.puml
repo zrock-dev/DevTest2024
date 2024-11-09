@@ -1,0 +1,35 @@
+@startuml
+skinparam wrapwidth 200
+title Online polling system
+footer SysML requirements diagram
+
+!include ./non-functional.puml
+    stereotype "Get poll list api" AS get_poll <<Requirement>> {
+        overview= endpoint, get list of existing polls with required format and status code.
+    }
+
+    stereotype "create new poll" AS create_poll <<Requirement>> {
+        overview= implement endpoint for creating new polls.
+    }
+
+    stereotype "vote for poll" AS vote_poll <<Requirement>> {
+        overview= users should be able to vote on existing polls.
+    }
+
+    stereotype "Build a restful api service" AS api_service <<Requirement>> {
+        overview = api that enables user's to mange and vote on polls
+    }
+    api_service +-- vote_poll
+    api_service +-- create_poll
+    api_service +-- get_poll
+
+    stereotype "Online polling system" AS root <<Requirement>> {
+        overview = users can create and vote on polls. See the number of votes per option and percentage insights that highlights most important choice.
+    }
+    root +-- api_service
+
+@enduml
+
+    stereotype "" AS <<Requirement>> {
+        overview=
+    }
